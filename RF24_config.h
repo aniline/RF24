@@ -36,9 +36,9 @@ extern HardwareSPI SPI;
 #define IF_SERIAL_DEBUG(x)
 #endif
 
-// Avoid spurious warnings
+// Avoid spurious warnings (NOT for ESP8266)
 #if 1
-#if ! defined( NATIVE ) && defined( ARDUINO )
+#if ! defined( NATIVE ) && defined( ARDUINO ) && ! defined(__XTENSA__)
 #undef PROGMEM
 #define PROGMEM __attribute__(( section(".progmem.data") ))
 #undef PSTR
@@ -46,10 +46,11 @@ extern HardwareSPI SPI;
 #endif
 #endif
 
-// Progmem is Arduino-specific
-#ifdef ARDUINO
-#include <avr/pgmspace.h>
-#define PRIPSTR "%S"
+// Progmem is Arduino-specific (Also Arduino IDE for ESP)
+#if defined (ARDUINO)
+#include <pgmspace.h>
+#define PRIPSTR "%s"
+#define printf_P os_printf
 #else
 typedef char const char;
 typedef uint16_t prog_uint16_t;
